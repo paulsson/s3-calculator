@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xsi:schemaLocation="
+    http://www.springframework.org/schema/beans  http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+  <context:component-scan base-package="org.duraspace.duracloud" />
+  
+  <bean id="jsonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
+  
+  <mvc:annotation-driven>
+		<mvc:message-converters>
+			<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper" ref="jsonObjectMapper"/>
+			</bean>
+		</mvc:message-converters>
+  </mvc:annotation-driven>
+  
+  <!-- Enable serving of static resources. -->
+  <mvc:default-servlet-handler/>
+  
+  <!-- JMX stuff -->
+  <!-- this bean must not be lazily initialized if the exporting is to happen -->
+  <bean id="exporter" class="org.springframework.jmx.export.MBeanExporter" lazy-init="false">
+      <property name="assembler" ref="assembler" />
+      <property name="namingStrategy" ref="namingStrategy" />
+      <property name="autodetect" value="true" />
+  </bean>
+
+  <bean id="jmxAttributeSource" class="org.springframework.jmx.export.annotation.AnnotationJmxAttributeSource" />
+
+  <!-- will create management interface using annotation metadata -->
+  <bean id="assembler" class="org.springframework.jmx.export.assembler.MetadataMBeanInfoAssembler">
+      <property name="attributeSource" ref="jmxAttributeSource" />
+  </bean>
+
+  <!-- will pick up the ObjectName from the annotation -->
+  <bean id="namingStrategy" class="org.springframework.jmx.export.naming.MetadataNamingStrategy">
+      <property name="attributeSource" ref="jmxAttributeSource" />
+  </bean>
+  
+</beans>

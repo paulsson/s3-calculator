@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>DuraCloud S3 Storage Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <h3>DuraCloud S3 Storage Calculator</h3>
+    
+    <form id="s3params" class="span6 well form-horizontal">
+      <div class="control-group">
+        <label for="tb" class="control-label">Terabytes:</label>
+        <div class="controls">
+          <input id="tb" type="text"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="months" class="control-label">Months:</label>
+        <div class="controls">
+          <input id="months" type="text"/>
+        </div>
+      </div>
+      <div class="control-group">
+        <div class="controls">
+          <button type="submit" class="btn btn-success">Calculate</button>
+        </div>
+      </div>
+    </form>
+    
+    <form class="span6 well form-horizontal">
+      <div class="control-group">
+        <label for="standard" class="control-label">Standard:</label>
+        <div class="controls">
+          <input id="standard" type="text" disabled/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="reduced" class="control-label">Reduced:</label>
+        <div class="controls">
+          <input id="reduced" type="text" disabled/>
+        </div>
+      </div>
+      <div class="control-group">
+        <label for="glacier" class="control-label">Glacier:</label>
+        <div class="controls">
+          <input id="glacier" type="text" disabled/>
+        </div>
+      </div>
+    </form>
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $('#s3params').submit(function() {
+            calculate();
+            return false;
+        });
+        
+    	calculate = function() {
+    	    var months = $("#months").val();
+    	    var tb = $("#tb").val();
+    	    if(months && tb) {
+        	    var url = "s3/calc/months/" + months + "/tb/" + tb;
+        	    $.ajax({
+        	        url: url,
+        	        success: function(data) {
+        	    	    $("#standard").val(data.standard);
+        		        $("#reduced").val(data.reduced);
+        		        $("#glacier").val(data.glacier);
+        	    	},
+        	        error: function(xhr, status, error) {
+        	    	    alert("You must enter integer values for 'terabytes' and 'months'.")
+        	    	}
+        	    });
+        	} else {
+    	        alert("You must enter a value for 'terabytes' and 'months'.")
+    	    }
+    	}
+    </script>
+  </body>
+</html>
