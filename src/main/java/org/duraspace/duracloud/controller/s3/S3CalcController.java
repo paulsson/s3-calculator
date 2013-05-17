@@ -44,8 +44,7 @@ public class S3CalcController {
     
     private int[] tiers;
     private Map<Integer, double[]> tierPricing;
-    MathContext mc = new MathContext(2);
-
+    
     @Autowired
     private ServletContext context;
     
